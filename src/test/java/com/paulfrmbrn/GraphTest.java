@@ -39,7 +39,7 @@ class GraphTest {
     private static final Graph<String> SIMPLE_UNDIRECTED_10_VERTICES_GRAPH;
     static {
 
-        THREE_VERTICES_GRAPH = Graph.directedWeightedGraphBuilder(VERTEX_A)
+        THREE_VERTICES_GRAPH = Graph.directedWeightedBuilder(VERTEX_A)
                 .addVertex(VERTEX_B)
                 .addVertex(VERTEX_C)
                 .addEdge(VERTEX_A, VERTEX_B, 5)
@@ -48,7 +48,7 @@ class GraphTest {
                 .addEdge(VERTEX_C, VERTEX_B, 1)
                 .build();
 
-        FIVE_VERTICES_GRAPH = Graph.directedWeightedGraphBuilder(VERTEX_E)
+        FIVE_VERTICES_GRAPH = Graph.directedWeightedBuilder(VERTEX_E)
                 .addVertex(VERTEX_A)
                 .addVertex(VERTEX_B)
                 .addVertex(VERTEX_C)
@@ -64,7 +64,7 @@ class GraphTest {
                 .addEdge(VERTEX_E, VERTEX_B, 4)
                 .build();
 
-        UNREACHABLE_VERTEX_GRAPH = Graph.directedWeightedGraphBuilder(VERTEX_A)
+        UNREACHABLE_VERTEX_GRAPH = Graph.directedWeightedBuilder(VERTEX_A)
                 .addVertex(VERTEX_B)
                 .addVertex(VERTEX_C)
                 .addVertex(VERTEX_D)
@@ -76,9 +76,9 @@ class GraphTest {
                 .addEdge(VERTEX_D, VERTEX_C, 1)
                 .build();
 
-        DISCONNECTED_GRAPH = Graph.directedWeightedGraphBuilder(VERTEX_A).addVertex(VERTEX_B).build();
+        DISCONNECTED_GRAPH = Graph.directedWeightedBuilder(VERTEX_A).addVertex(VERTEX_B).build();
 
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH = Graph.undirectedUnweightedGraphBuilder(VERTEX_A)
+        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH = Graph.undirectedUnweightedBuilder(VERTEX_A)
                 .addVertex(VERTEX_B)
                 .addVertex(VERTEX_C)
                 .addVertex(VERTEX_D)
@@ -107,13 +107,13 @@ class GraphTest {
 
     @Test
     public void shouldCreateNewGraphWithSingleVertexAndNoEdges() {
-        assertEquals("['A']", Graph.directedWeightedGraphBuilder(VERTEX_A).build().toString());
+        assertEquals("['A']", Graph.directedWeightedBuilder(VERTEX_A).build().toString());
     }
 
     @Test
     public void shouldCreateNewGraphWithMultipleVerticesAndNoEdges() {
         // when
-        var graph = Graph.directedWeightedGraphBuilder(VERTEX_A)
+        var graph = Graph.directedWeightedBuilder(VERTEX_A)
                 .addVertex(VERTEX_B)
                 .addVertex(VERTEX_C).build();
         // then
@@ -132,12 +132,12 @@ class GraphTest {
 
     @Test
     public void shouldFailOnAddingEdgeToVertexThatDoNotBelongToTheGraph() {
-        assertThrows(IllegalArgumentException.class, () -> Graph.directedWeightedGraphBuilder(VERTEX_A).addVertex(VERTEX_B).addEdge(VERTEX_A, VERTEX_B, -1));
+        assertThrows(IllegalArgumentException.class, () -> Graph.directedWeightedBuilder(VERTEX_A).addVertex(VERTEX_B).addEdge(VERTEX_A, VERTEX_B, -1));
     }
 
     @Test
     public void shouldFailOnAddingEdgeWithNegativeValue() {
-        assertThrows(IllegalArgumentException.class, () -> Graph.directedWeightedGraphBuilder(VERTEX_A).addEdge(VERTEX_A, VERTEX_B, -1));
+        assertThrows(IllegalArgumentException.class, () -> Graph.directedWeightedBuilder(VERTEX_A).addEdge(VERTEX_A, VERTEX_B, -1));
     }
 
     @Test

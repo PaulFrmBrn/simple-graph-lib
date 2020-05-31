@@ -119,7 +119,7 @@ public final class Graph<T> {
     }
 
     /**
-     * BFS algorithm implementations for finding shortest path between two vertices
+     * BFS algorithm implementation for finding shortest path between two vertices
      * Should be used only for instances of {@link Graph} with {@link Graph#isWeighted} equals to {@link Boolean#FALSE}
      * Otherwise path found may not be the shortest one
      *
@@ -164,7 +164,7 @@ public final class Graph<T> {
     }
 
     /**
-     * Dijkstra algorithm implementations for finding shortest path between two vertices
+     * Dijkstra algorithm implementation for finding shortest path between two vertices
      * Should be used only for instances of {@link Graph} with {@link Graph#isWeighted} equals to {@link Boolean#TRUE}
      * Otherwise {@link Graph#findPathByBfs(Vertex, Vertex)} is preferable due to its lower time complexity
      *
@@ -252,20 +252,20 @@ public final class Graph<T> {
                 .collect(Collectors.joining(" | ", "[", "]"));
     }
 
-    public static <T> UndirectedUnweightedGraphBuilder<T> undirectedUnweightedGraphBuilder(@Nonnull Vertex<T> root){
-        return new UndirectedUnweightedGraphBuilder<>(root);
+    public static <T> UndirectedUnweightedBuilder<T> undirectedUnweightedBuilder(@Nonnull Vertex<T> root){
+        return new UndirectedUnweightedBuilder<>(root);
     }
 
-    public static <T> DirectedUnweightedGraphBuilder<T> directedUnweightedGraphBuilder(@Nonnull Vertex<T> root){
-        return new DirectedUnweightedGraphBuilder<>(root);
+    public static <T> DirectedUnweightedBuilder<T> directedUnweightedBuilder(@Nonnull Vertex<T> root){
+        return new DirectedUnweightedBuilder<>(root);
     }
 
-    public static <T> UndirectedWeightedGraphBuilder<T> undirectedWeightedGraphBuilder(@Nonnull Vertex<T> root){
-        return new UndirectedWeightedGraphBuilder<>(root);
+    public static <T> UndirectedWeightedBuilder<T> undirectedWeightedBuilder(@Nonnull Vertex<T> root){
+        return new UndirectedWeightedBuilder<>(root);
     }
 
-    public static <T> DirectedWeightedGraphBuilder<T> directedWeightedGraphBuilder(@Nonnull Vertex<T> root){
-        return new DirectedWeightedGraphBuilder<>(root);
+    public static <T> DirectedWeightedBuilder<T> directedWeightedBuilder(@Nonnull Vertex<T> root){
+        return new DirectedWeightedBuilder<>(root);
     }
 
     public static class Builder<T> {
@@ -335,20 +335,20 @@ public final class Graph<T> {
 
     }
 
-    public static class UndirectedUnweightedGraphBuilder<T> {
+    public static class UndirectedUnweightedBuilder<T> {
 
         private final Builder<T> builder;
 
-        public UndirectedUnweightedGraphBuilder(Vertex<T> root) {
+        public UndirectedUnweightedBuilder(Vertex<T> root) {
             builder = new Builder<T>(root, false);
         }
 
-        public UndirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+        public UndirectedUnweightedBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
             builder.addVertex(vertex);
             return this;
         }
 
-        public UndirectedUnweightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
+        public UndirectedUnweightedBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
             builder.addUndirectedEdge(from, to, Builder.UNWEIGHTED_WEIGHT);
             return this;
         }
@@ -359,20 +359,20 @@ public final class Graph<T> {
 
     }
 
-    public static class DirectedUnweightedGraphBuilder<T>  {
+    public static class DirectedUnweightedBuilder<T>  {
 
         private final Builder<T> builder;
 
-        public DirectedUnweightedGraphBuilder(Vertex<T> root) {
+        public DirectedUnweightedBuilder(Vertex<T> root) {
             builder = new Builder<>(root, false);
         }
 
-        public DirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+        public DirectedUnweightedBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
             builder.addVertex(vertex);
             return this;
         }
 
-        public DirectedUnweightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
+        public DirectedUnweightedBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
             builder.addEdge(from, to, Builder.UNWEIGHTED_WEIGHT);
             return this;
         }
@@ -383,20 +383,20 @@ public final class Graph<T> {
 
     }
 
-    public static class UndirectedWeightedGraphBuilder<T> {
+    public static class UndirectedWeightedBuilder<T> {
 
         private final Builder<T> builder;
 
-        public UndirectedWeightedGraphBuilder(Vertex<T> root) {
+        public UndirectedWeightedBuilder(Vertex<T> root) {
             builder = new Builder<>(root, true);
         }
 
-        public UndirectedWeightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+        public UndirectedWeightedBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
             builder.addVertex(vertex);
             return this;
         }
 
-        public UndirectedWeightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+        public UndirectedWeightedBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
             builder.addUndirectedEdge(from, to, weight);
             return this;
         }
@@ -407,20 +407,20 @@ public final class Graph<T> {
 
     }
 
-    public static class DirectedWeightedGraphBuilder<T>  {
+    public static class DirectedWeightedBuilder<T>  {
 
         private final Builder<T> builder;
 
-        public DirectedWeightedGraphBuilder(Vertex<T> root) {
+        public DirectedWeightedBuilder(Vertex<T> root) {
             builder = new Builder<>(root, true);
         }
 
-        public DirectedWeightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+        public DirectedWeightedBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
             builder.addVertex(vertex);
             return this;
         }
 
-        public DirectedWeightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+        public DirectedWeightedBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
             builder.addEdge(from, to, weight);
             return this;
         }
