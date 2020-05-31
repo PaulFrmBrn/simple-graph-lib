@@ -14,16 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
 /**
- * todo comment
- * todo implement
- * todo javadoc
- * todo test
- * todo toString()
- * todo equals, hashcode
- * todo rnn
- * todo metrics
- *
- * todo parametrized tests for each implementation
+ * Tests for {@link Graph}
  *
  * @author Dmitry Pavlov
  * @since 30.05.2020
@@ -41,8 +32,8 @@ class GraphTest {
     private static final Vertex<String> VERTEX_I = Vertex.of("I");
     private static final Vertex<String> VERTEX_J = Vertex.of("J");
 
-    private static final Graph<String> THREE_VERTICES_GRAPH; // todo rename primitive
-    private static final Graph<String> FIVE_VERTICES_GRAPH; // todo simple
+    private static final Graph<String> THREE_VERTICES_GRAPH;
+    private static final Graph<String> FIVE_VERTICES_GRAPH;
     private static final Graph<String> UNREACHABLE_VERTEX_GRAPH;
     private static final Graph<String> DISCONNECTED_GRAPH;
     private static final Graph<String> SIMPLE_UNDIRECTED_10_VERTICES_GRAPH;
@@ -118,8 +109,6 @@ class GraphTest {
     public void shouldCreateNewGraphWithSingleVertexAndNoEdges() {
         assertEquals("['A']", Graph.directedWeightedGraphBuilder(VERTEX_A).build().toString());
     }
-
-    // todo adding another edge rewrite current
 
     @Test
     public void shouldCreateNewGraphWithMultipleVerticesAndNoEdges() {
@@ -219,7 +208,7 @@ class GraphTest {
 
     }
 
-    private static Stream<Arguments> shouldFindPathInDirectedWeightedGraph2() { // todo fix name
+    private static Stream<Arguments> shouldFindPathInDirectedWeightedGraph() {
         return Stream.of(
                 of(VERTEX_E, VERTEX_A, "EDBA"),
                 of(VERTEX_E, VERTEX_B, "EDB"),
@@ -232,7 +221,7 @@ class GraphTest {
 
     @ParameterizedTest
     @MethodSource
-    public void shouldFindPathInDirectedWeightedGraph2(Vertex<String> from, Vertex<String> to, String expectedPath) {
+    public void shouldFindPathInDirectedWeightedGraph(Vertex<String> from, Vertex<String> to, String expectedPath) {
         //given
         var builder = new StringBuilder();
         // when

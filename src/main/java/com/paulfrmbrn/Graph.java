@@ -15,27 +15,24 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- * todo comment
- * todo implement
- * todo javadoc
- * todo test
- * todo toString()
- * todo equals, hashcode
- * todo rnn
- * todo metrics
- * <p>
- * all verticies should be reachable from root
- * should not be diconenected
- * max size is max int
+ * Represent a graph
+ * Use one of the available builders to construct an immutable instance of the class
+ * Builders provide all available types of graph implementation.
+ * Negative weighted graphs are not supported.
+ *
+ * Disconnected graph or graph with unreachable vertices can be constructed, but {@link Graph#traverse(Consumer)} and
+ * {@link Graph#findPath(Vertex, Vertex, Consumer)} methods could fail with {@link IllegalStateException} in this case.
+ *
+ * Max count of vertices is {@link Integer#MAX_VALUE}
  *
  * @author Dmitry Pavlov
  * @since 30.05.2020
  */
 @Immutable
-public class Graph<T> {
+public final class Graph<T> {
 
     public static final int INFINITY_DISTANCE_VALUE = Integer.MAX_VALUE;
-    // todo check in Edge
+
     private final boolean isWeighted;
     private final Vertex<T> root;
     private final Set<Vertex<T>> vertices;
@@ -49,10 +46,14 @@ public class Graph<T> {
         vertices.add(root);
     }
 
-    // todo javadoc
+    /**
+     * Traverses the graph from the {@link Graph#root} and applies specified action on each vertex
+     *
+     * @throws IllegalStateException if {to} is not reachable from {from}
+     */
     public void traverse(@Nonnull Consumer<T> consumer) {
 
-        requireNonNull(consumer, "supplier");
+        requireNonNull(consumer, "consumer");
 
         var visitedSet = new HashSet<Vertex<T>>();
         var toBeVisitedQueue = new LinkedList<Vertex<T>>();
@@ -82,12 +83,20 @@ public class Graph<T> {
         }
     }
 
-    // todo javadoc
+    /**
+     * Given a pair of vertices tries to find shortest path between them.
+     *
+     * @param from Vertx from which path is searched. Do not has to be a root vertex of the graph
+     * @param to Vertx to which path is searched
+     * @param consumer action to be applied to each Vertex's value on the path from {from} Vertex to {to}
+     *
+     * @throws IllegalStateException if {to} is not reachable from {from}
+     */
     public void findPath(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, @Nonnull Consumer<T> consumer) {
 
         validateVertex(from);
         validateVertex(to);
-        requireNonNull(consumer, "supplier");
+        requireNonNull(consumer, "consumer");
 
         if (from.equals(to)) {
             consumer.accept(from.getValue());
@@ -109,7 +118,13 @@ public class Graph<T> {
 
     }
 
-    // todo javadoc
+    /**
+     * BFS algorithm implementations for finding shortest path between two vertices
+     * Should be used only for instances of {@link Graph} with {@link Graph#isWeighted} equals to {@link Boolean#FALSE}
+     * Otherwise path found may not be the shortest one
+     *
+     * @return Map representing vertex to it's parent vertex mapping
+     */
     private HashMap<Vertex<T>, Vertex<T>> findPathByBfs(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
 
         var visitedSet = new HashSet<Vertex<T>>();
@@ -148,7 +163,13 @@ public class Graph<T> {
         return parents;
     }
 
-    // todo javadoc
+    /**
+     * Dijkstra algorithm implementations for finding shortest path between two vertices
+     * Should be used only for instances of {@link Graph} with {@link Graph#isWeighted} equals to {@link Boolean#TRUE}
+     * Otherwise {@link Graph#findPathByBfs(Vertex, Vertex)} is preferable due to its lower time complexity
+     *
+     * @return Map representing vertex to it's parent vertex mapping
+     */
     private HashMap<Vertex<T>, Vertex<T>> findPathByDijkstra(@Nonnull Vertex<T> from) {
 
         var minHeap = new PriorityQueue<Distance<T>>();
@@ -194,12 +215,16 @@ public class Graph<T> {
     }
 
 
-    // todo javadoc
+    /**
+     * @return all vertices of the graph
+     */
     public Set<Vertex<T>> getVertices() {
         return new HashSet<>(this.vertices);
     }
 
-    // todo javadoc
+    /**
+     * @return all edges for the specified vertex
+     */
     public Set<Edge<T>> getEdges(Vertex<T> from) {
         validateVertex(from);
         return edgesMap.get(from) == null
@@ -208,7 +233,6 @@ public class Graph<T> {
 
     }
 
-    // todo remove?
     private void validateVertex(@Nonnull Vertex<T> vertex) {
         requireNonNull(vertex, "vertex");
         if (!vertices.contains(vertex)) {
@@ -262,7 +286,7 @@ public class Graph<T> {
         }
 
         public Builder<T> addVertex(@Nonnull Vertex<T> vertex) {
-            vertices.add(requireNonNull(vertex, "vertex")); // todo check implementation aftrer swithivng to map
+            vertices.add(requireNonNull(vertex, "vertex"));
             return this;
         }
 
@@ -276,13 +300,8 @@ public class Graph<T> {
         protected Builder<T> addUndirectedEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
             validateVertex(from);
             validateVertex(to);
-            if (from.compareTo(to) < 0) {
-                addEdgeInternal(from, to, weight);
-                addEdgeInternal(to, from, weight);
-            } else {
-                addEdgeInternal(to, from, weight); // todo remove
-                addEdgeInternal(from, to, weight);
-            }
+            addEdgeInternal(from, to, weight);
+            addEdgeInternal(to, from, weight);
             return this;
         }
 
