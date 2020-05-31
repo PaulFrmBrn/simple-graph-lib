@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -33,6 +34,8 @@ import static java.util.Objects.requireNonNull;
 @Immutable
 public class Graph<T> {
 
+    public static final int INFINITI_DISTANCE_VALUE = 1000; // todo odcument
+    // todo check in Edge
     //private final boolean isWeighted;
     private final Vertex<T> root;
     private final Set<Vertex<T>> vertices;
@@ -46,6 +49,7 @@ public class Graph<T> {
         vertices.add(root);
     }
 
+    // todo javadoc
     public void traverse(@Nonnull Consumer<T> consumer) {
 
         requireNonNull(consumer, "supplier");
@@ -78,6 +82,7 @@ public class Graph<T> {
         }
     }
 
+    // todo javadoc
     public void findPath(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, @Nonnull Consumer<T> consumer) {
 
         validateVertex(from);
@@ -136,10 +141,78 @@ public class Graph<T> {
 
     }
 
+    // todo javadoc
+    public void findPathByDijkstra(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, @Nonnull Consumer<T> consumer) {
+
+        // todo extract common part
+        validateVertex(from);
+        validateVertex(to);
+        requireNonNull(consumer, "supplier");
+
+        if (from.equals(to)) {
+            consumer.accept(from.getValue());
+            return;
+        }
+
+        var minHeap = new PriorityQueue<Distance<T>>();
+        var distances = new HashMap<Vertex<T>, Distance<T>>();
+        vertices.forEach(vertex -> {
+            int value = vertex.equals(from) ? 0 : INFINITI_DISTANCE_VALUE;
+            var distance = new Distance<>(vertex, value);
+            minHeap.add(distance);
+            distances.put(vertex, distance);
+        });
+        var notVisitedSet = new HashSet<>(vertices);
+        var parents = new HashMap<Vertex<T>, Vertex<T>>();
+
+        while (!minHeap.isEmpty()) {
+
+            var current = minHeap.remove();
+            notVisitedSet.remove(current.getVertex());
+
+            var edges = edgesMap.get(current.getVertex());
+            if (edges != null) {
+                for (var edge : edges) {
+                    if (notVisitedSet.contains(edge.getVertex())) {
+
+                        var currentDistance = distances.get(current.getVertex());
+                        var edgeDistance = distances.get(edge.getVertex());
+                        int weight = edge.getWeight();
+                        if (edgeDistance.getValue() > (currentDistance.getValue() + weight)) {
+                            edgeDistance.setValue((currentDistance.getValue() + weight));
+                            parents.put(edge.getVertex(), current.getVertex());
+
+                            minHeap.remove(edgeDistance);
+                            minHeap.add(edgeDistance);
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+
+        var path = new LinkedList<Vertex<T>>();
+        var current = to;
+        do {
+            path.addFirst(current);
+            current = parents.get(current);
+        } while (current != null);
+        if (!path.getFirst().equals(from)) {
+            throw new IllegalStateException("Vertex 'to' is not reachable from vertex 'from'");
+        }
+        path.forEach(vertex -> consumer.accept(vertex.getValue()));
+
+    }
+
+
+    // todo javadoc
     public Set<Vertex<T>> getVertices() {
         return new HashSet<>(this.vertices);
     }
 
+    // todo javadoc
     public Set<Edge<T>> getEdges(Vertex<T> from) {
         validateVertex(from);
         return edgesMap.get(from) == null

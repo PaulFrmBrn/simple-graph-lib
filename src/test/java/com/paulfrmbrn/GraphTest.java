@@ -257,5 +257,26 @@ class GraphTest {
         assertThrows(IllegalStateException.class, () -> DISCONNECTED_GRAPH.findPath(VERTEX_A, VERTEX_B, (value) -> {}));
     }
 
+    private static Stream<Arguments> shouldFindPathInDirectedWeightedGraph2() { // todo fix name
+        return Stream.of(
+                of(VERTEX_E, VERTEX_A, "EDBA"),
+                of(VERTEX_E, VERTEX_B, "EDB"),
+                of(VERTEX_E, VERTEX_C, "EDC"),
+                of(VERTEX_A, VERTEX_E, "EDC")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    public void shouldFindPathInDirectedWeightedGraph2(Vertex<String> from, Vertex<String> to, String expectedPath) {
+        //given
+        var builder = new StringBuilder();
+        // when
+        FIVE_VERTICES_GRAPH.findPathByDijkstra(from, to, builder::append);
+        //then
+        assertEquals(expectedPath, builder.toString());
+
+    }
+
 
 }
