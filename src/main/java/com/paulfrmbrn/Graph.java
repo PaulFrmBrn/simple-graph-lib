@@ -1,6 +1,7 @@
 package com.paulfrmbrn;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import static java.util.Objects.requireNonNull;
  * @author Dmitry Pavlov
  * @since 30.05.2020
  */
+@Immutable
 public class Graph<T> {
 
     //private final boolean isWeighted;
@@ -166,22 +168,32 @@ public class Graph<T> {
                 .collect(Collectors.joining(" | ", "[", "]"));
     }
 
-//    public static <T> UndirectedUnweightedGraphBuilder<T> undirectedUnweightedGraphBuilder(Set<Vertex<T>> vertices){
-//
-//    }
+    public static <T> UndirectedUnweightedGraphBuilder<T> undirectedUnweightedGraphBuilder(@Nonnull Vertex<T> root){
+        return new UndirectedUnweightedGraphBuilder<>(root);
+    }
 
-    public static <T> Builder<T> builder(@Nonnull Vertex<T> root) {
-        return new Builder<>(root);
+    public static <T> DirectedUnweightedGraphBuilder<T> directedUnweightedGraphBuilder(@Nonnull Vertex<T> root){
+        return new DirectedUnweightedGraphBuilder<>(root);
+    }
+
+    public static <T> UndirectedWeightedGraphBuilder<T> undirectedWeightedGraphBuilder(@Nonnull Vertex<T> root){
+        return new UndirectedWeightedGraphBuilder<>(root);
+    }
+
+    public static <T> DirectedWeightedGraphBuilder<T> directedWeightedGraphBuilder(@Nonnull Vertex<T> root){
+        return new DirectedWeightedGraphBuilder<>(root);
     }
 
     public static class Builder<T> {
+
+        protected static final int UNWEIGHTED_WEIGHT = 1;
 
 //        private final boolean isWeighted;
         private final Vertex<T> root;
         private final Set<Vertex<T>> vertices;
         private final Map<Vertex<T>, Set<Edge<T>>> edgesMap;
 
-        public Builder(@Nonnull Vertex<T> root) {
+        protected Builder(@Nonnull Vertex<T> root) {
             this.root = requireNonNull(root, "root");
             this.vertices = new HashSet<>();
             this.edgesMap = new HashMap<>();
@@ -194,27 +206,27 @@ public class Graph<T> {
             return this;
         }
 
-        public Builder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+        protected Builder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
             validateVertex(from);
             validateVertex(to);
             addEdgeInternal(from, to, weight);
             return this;
         }
 
-        public Builder<T> addUndirectedEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+        protected Builder<T> addUndirectedEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
             validateVertex(from);
             validateVertex(to);
             if (from.compareTo(to) < 0) {
                 addEdgeInternal(from, to, weight);
                 addEdgeInternal(to, from, weight);
             } else {
-                addEdgeInternal(to, from, weight);
+                addEdgeInternal(to, from, weight); // todo remove
                 addEdgeInternal(from, to, weight);
             }
             return this;
         }
 
-        private Builder<T> addEdgeInternal(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+        protected Builder<T> addEdgeInternal(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
 
             var newEdge = new Edge<>(to, weight);
 
@@ -239,33 +251,105 @@ public class Graph<T> {
         }
 
         public Graph<T> build() {
-            return new Graph<T>(
-                    this.root,
-                    this.vertices,
-                    this.edgesMap//,
-                    //isWeighted
-            );
+            return new Graph<>(this.root, this.vertices, this.edgesMap);
         }
 
     }
 
+    public static class UndirectedUnweightedGraphBuilder<T> {
 
-//    public static class UndirectedUnweightedGraphBuilder<T> extends Builder<T> {
-//
-//        public UndirectedUnweightedGraphBuilder(Vertex<T> vertex, boolean isWeighted) {
-//            super(vertex, isWeighted);
-//        }
-//
-//        public UndirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
-//            super.addVertex(vertex);
-//            return this;
-//        }
-//
-//        public UndirectedUnweightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> vertex) {
-//            graph.addVertex(vertex);
-//            return this;
-//        }
-//
-//
-//    }
+        private final Builder<T> builder;
+
+        public UndirectedUnweightedGraphBuilder(Vertex<T> root) {
+            builder = new Builder<T>(root);
+        }
+
+        public UndirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+            builder.addVertex(vertex);
+            return this;
+        }
+
+        public UndirectedUnweightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
+            builder.addUndirectedEdge(from, to, Builder.UNWEIGHTED_WEIGHT);
+            return this;
+        }
+
+        public Graph<T> build() {
+            return builder.build();
+        }
+
+    }
+
+    public static class DirectedUnweightedGraphBuilder<T>  {
+
+        private final Builder<T> builder;
+
+        public DirectedUnweightedGraphBuilder(Vertex<T> root) {
+            builder = new Builder<>(root);
+        }
+
+        public DirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+            builder.addVertex(vertex);
+            return this;
+        }
+
+        public DirectedUnweightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
+            builder.addEdge(from, to, Builder.UNWEIGHTED_WEIGHT);
+            return this;
+        }
+
+        public Graph<T> build() {
+            return builder.build();
+        }
+
+    }
+
+    public static class UndirectedWeightedGraphBuilder<T> {
+
+        private final Builder<T> builder;
+
+        public UndirectedWeightedGraphBuilder(Vertex<T> root) {
+            builder = new Builder<>(root);
+        }
+
+        public UndirectedWeightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+            builder.addVertex(vertex);
+            return this;
+        }
+
+        public UndirectedWeightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+            builder.addUndirectedEdge(from, to, weight);
+            return this;
+        }
+
+        public Graph<T> build() {
+            return builder.build();
+        }
+
+    }
+
+    public static class DirectedWeightedGraphBuilder<T>  {
+
+        private final Builder<T> builder;
+
+        public DirectedWeightedGraphBuilder(Vertex<T> root) {
+            builder = new Builder<>(root);
+        }
+
+        public DirectedWeightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+            builder.addVertex(vertex);
+            return this;
+        }
+
+        public DirectedWeightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+            builder.addEdge(from, to, weight);
+            return this;
+        }
+
+        public Graph<T> build() {
+            return builder.build();
+        }
+
+    }
+
 }

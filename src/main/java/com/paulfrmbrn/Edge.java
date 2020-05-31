@@ -7,7 +7,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represent edge of the {@link Graph}
+ * Represents edge of the {@link Graph}
  * Stores `to` vertex and edge weight.
  *
  * {@link Edge#weight} can not be negative
