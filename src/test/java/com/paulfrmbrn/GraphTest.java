@@ -219,30 +219,34 @@ class GraphTest {
 
     }
 
-    private static Stream<Arguments> shouldFindPathInDirectedWeightedGraph() {
+    private static Stream<Arguments> shouldFindPathInDirectedWeightedGraph2() { // todo fix name
         return Stream.of(
-                of(VERTEX_E, VERTEX_A, "EBA"),
-                of(VERTEX_B, VERTEX_D, "BAD"),
-                of(VERTEX_A, VERTEX_B, "ADB")
+                of(VERTEX_E, VERTEX_A, "EDBA"),
+                of(VERTEX_E, VERTEX_B, "EDB"),
+                of(VERTEX_E, VERTEX_C, "EDC"),
+                of(VERTEX_E, VERTEX_D, "ED"),
+                of(VERTEX_C, VERTEX_A, "CDBA"),
+                of(VERTEX_D, VERTEX_C, "DC")
         );
     }
 
     @ParameterizedTest
     @MethodSource
-    public void shouldFindPathInDirectedWeightedGraph(Vertex<String> from, Vertex<String> to, String expectedPath) {
+    public void shouldFindPathInDirectedWeightedGraph2(Vertex<String> from, Vertex<String> to, String expectedPath) {
         //given
         var builder = new StringBuilder();
         // when
         FIVE_VERTICES_GRAPH.findPath(from, to, builder::append);
         //then
         assertEquals(expectedPath, builder.toString());
+
     }
 
     private static Stream<Arguments> shouldFailOnFindingPathToNotReachableVertex() {
         return Stream.of(
-                of(VERTEX_A, VERTEX_E, "EBA"),
-                of(VERTEX_B, VERTEX_E, "EBA"),
-                of(VERTEX_C, VERTEX_E, "EBA")
+                of(VERTEX_A, VERTEX_E),
+                of(VERTEX_B, VERTEX_E),
+                of(VERTEX_C, VERTEX_E)
         );
     }
 
@@ -255,27 +259,6 @@ class GraphTest {
     @Test
     public void shouldFailOnFindingPathInDisconnectedGraph() {
         assertThrows(IllegalStateException.class, () -> DISCONNECTED_GRAPH.findPath(VERTEX_A, VERTEX_B, (value) -> {}));
-    }
-
-    private static Stream<Arguments> shouldFindPathInDirectedWeightedGraph2() { // todo fix name
-        return Stream.of(
-                of(VERTEX_E, VERTEX_A, "EDBA"),
-                of(VERTEX_E, VERTEX_B, "EDB"),
-                of(VERTEX_E, VERTEX_C, "EDC"),
-                of(VERTEX_A, VERTEX_E, "EDC")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource
-    public void shouldFindPathInDirectedWeightedGraph2(Vertex<String> from, Vertex<String> to, String expectedPath) {
-        //given
-        var builder = new StringBuilder();
-        // when
-        FIVE_VERTICES_GRAPH.findPathByDijkstra(from, to, builder::append);
-        //then
-        assertEquals(expectedPath, builder.toString());
-
     }
 
 

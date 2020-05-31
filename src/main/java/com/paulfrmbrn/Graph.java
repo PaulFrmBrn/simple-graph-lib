@@ -34,18 +34,18 @@ import static java.util.Objects.requireNonNull;
 @Immutable
 public class Graph<T> {
 
-    public static final int INFINITI_DISTANCE_VALUE = 1000; // todo odcument
+    public static final int INFINITY_DISTANCE_VALUE = Integer.MAX_VALUE;
     // todo check in Edge
-    //private final boolean isWeighted;
+    private final boolean isWeighted;
     private final Vertex<T> root;
     private final Set<Vertex<T>> vertices;
     private final Map<Vertex<T>, Set<Edge<T>>> edgesMap;
 
-    public Graph(Vertex<T> vertex, Set<Vertex<T>> vertices, Map<Vertex<T>, Set<Edge<T>>> edgesMap) {
+    private Graph(Vertex<T> vertex, Set<Vertex<T>> vertices, Map<Vertex<T>, Set<Edge<T>>> edgesMap, boolean isWeighted) {
         this.root = requireNonNull(vertex, "vertex");
         this.vertices = requireNonNull(vertices, "vertices");
         this.edgesMap = requireNonNull(edgesMap, "edgesMap");
-        //this.isWeighted = isWeighted;
+        this.isWeighted = isWeighted;
         vertices.add(root);
     }
 
@@ -94,6 +94,24 @@ public class Graph<T> {
             return;
         }
 
+        var parents = isWeighted ? findPathByDijkstra(from) : findPathByBfs(from, to);
+
+        var path = new LinkedList<Vertex<T>>();
+        var current = to;
+        do {
+            path.addFirst(current);
+            current = parents.get(current);
+        } while (current != null);
+        if (!path.getFirst().equals(from)) {
+            throw new IllegalStateException("Vertex 'to' is not reachable from vertex 'from'");
+        }
+        path.forEach(vertex -> consumer.accept(vertex.getValue()));
+
+    }
+
+    // todo javadoc
+    private HashMap<Vertex<T>, Vertex<T>> findPathByBfs(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to) {
+
         var visitedSet = new HashSet<Vertex<T>>();
         var toBeVisitedQueue = new LinkedList<Vertex<T>>();
         var parents = new HashMap<Vertex<T>, Vertex<T>>();
@@ -127,37 +145,16 @@ public class Graph<T> {
             }
 
         }
-
-        var path = new LinkedList<Vertex<T>>();
-        var current = to;
-        do {
-            path.addFirst(current);
-            current = parents.get(current);
-        } while (current != null);
-        if (!path.getFirst().equals(from)) {
-            throw new IllegalStateException("Vertex 'to' is not reachable from vertex 'from'");
-        }
-        path.forEach(vertex -> consumer.accept(vertex.getValue()));
-
+        return parents;
     }
 
     // todo javadoc
-    public void findPathByDijkstra(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, @Nonnull Consumer<T> consumer) {
-
-        // todo extract common part
-        validateVertex(from);
-        validateVertex(to);
-        requireNonNull(consumer, "supplier");
-
-        if (from.equals(to)) {
-            consumer.accept(from.getValue());
-            return;
-        }
+    private HashMap<Vertex<T>, Vertex<T>> findPathByDijkstra(@Nonnull Vertex<T> from) {
 
         var minHeap = new PriorityQueue<Distance<T>>();
         var distances = new HashMap<Vertex<T>, Distance<T>>();
         vertices.forEach(vertex -> {
-            int value = vertex.equals(from) ? 0 : INFINITI_DISTANCE_VALUE;
+            int value = vertex.equals(from) ? 0 : INFINITY_DISTANCE_VALUE;
             var distance = new Distance<>(vertex, value);
             minHeap.add(distance);
             distances.put(vertex, distance);
@@ -192,17 +189,7 @@ public class Graph<T> {
             }
 
         }
-
-        var path = new LinkedList<Vertex<T>>();
-        var current = to;
-        do {
-            path.addFirst(current);
-            current = parents.get(current);
-        } while (current != null);
-        if (!path.getFirst().equals(from)) {
-            throw new IllegalStateException("Vertex 'to' is not reachable from vertex 'from'");
-        }
-        path.forEach(vertex -> consumer.accept(vertex.getValue()));
+        return parents;
 
     }
 
@@ -261,16 +248,16 @@ public class Graph<T> {
 
         protected static final int UNWEIGHTED_WEIGHT = 1;
 
-//        private final boolean isWeighted;
+        private final boolean isWeighted;
         private final Vertex<T> root;
         private final Set<Vertex<T>> vertices;
         private final Map<Vertex<T>, Set<Edge<T>>> edgesMap;
 
-        protected Builder(@Nonnull Vertex<T> root) {
+        protected Builder(@Nonnull Vertex<T> root, boolean isWeighted) {
             this.root = requireNonNull(root, "root");
             this.vertices = new HashSet<>();
             this.edgesMap = new HashMap<>();
-//            this.isWeighted = isWeighted;
+           this.isWeighted = isWeighted;
             vertices.add(root);
         }
 
@@ -324,7 +311,7 @@ public class Graph<T> {
         }
 
         public Graph<T> build() {
-            return new Graph<>(this.root, this.vertices, this.edgesMap);
+            return new Graph<>(this.root, this.vertices, this.edgesMap, isWeighted);
         }
 
     }
@@ -334,7 +321,7 @@ public class Graph<T> {
         private final Builder<T> builder;
 
         public UndirectedUnweightedGraphBuilder(Vertex<T> root) {
-            builder = new Builder<T>(root);
+            builder = new Builder<T>(root, false);
         }
 
         public UndirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
@@ -358,7 +345,7 @@ public class Graph<T> {
         private final Builder<T> builder;
 
         public DirectedUnweightedGraphBuilder(Vertex<T> root) {
-            builder = new Builder<>(root);
+            builder = new Builder<>(root, false);
         }
 
         public DirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
@@ -382,7 +369,7 @@ public class Graph<T> {
         private final Builder<T> builder;
 
         public UndirectedWeightedGraphBuilder(Vertex<T> root) {
-            builder = new Builder<>(root);
+            builder = new Builder<>(root, true);
         }
 
         public UndirectedWeightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
@@ -406,7 +393,7 @@ public class Graph<T> {
         private final Builder<T> builder;
 
         public DirectedWeightedGraphBuilder(Vertex<T> root) {
-            builder = new Builder<>(root);
+            builder = new Builder<>(root, true);
         }
 
         public DirectedWeightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
