@@ -31,53 +31,17 @@ import static java.util.Objects.requireNonNull;
  */
 public class Graph<T> {
 
+    //private final boolean isWeighted;
     private final Vertex<T> root;
     private final Set<Vertex<T>> vertices;
     private final Map<Vertex<T>, Set<Edge<T>>> edgesMap;
 
-    public Graph(Vertex<T> vertex) {
-        this.root = vertex;
-        this.vertices = new HashSet<>();
-        this.edgesMap = new HashMap<>();
+    public Graph(Vertex<T> vertex, Set<Vertex<T>> vertices, Map<Vertex<T>, Set<Edge<T>>> edgesMap) {
+        this.root = requireNonNull(vertex, "vertex");
+        this.vertices = requireNonNull(vertices, "vertices");
+        this.edgesMap = requireNonNull(edgesMap, "edgesMap");
+        //this.isWeighted = isWeighted;
         vertices.add(root);
-    }
-
-    public void addVertex(@Nonnull Vertex<T> vertex) {
-        vertices.add(requireNonNull(vertex, "vertex")); // todo check implementation aftrer swithivng to map
-    }
-
-    public void addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
-        validateVertex(from);
-        validateVertex(to);
-        addEdgeInternal(from, to, weight);
-    }
-
-    public void addUndirectedEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
-        validateVertex(from);
-        validateVertex(to);
-        if (from.compareTo(to) < 0) {
-            addEdgeInternal(from, to, weight);
-            addEdgeInternal(to, from, weight);
-        } else {
-            addEdgeInternal(to, from, weight);
-            addEdgeInternal(from, to, weight);
-        }
-    }
-
-    private void addEdgeInternal(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
-
-        var newEdge = new Edge<>(to, weight);
-
-        edgesMap.compute(from, (key, value) -> {
-            if (value == null) {
-                var newValue = new HashSet<Edge<T>>();
-                newValue.add(newEdge);
-                return newValue;
-            } else {
-                value.add(newEdge);
-                return value;
-            }
-        });
     }
 
     public void traverse(@Nonnull Consumer<T> consumer) {
@@ -182,10 +146,11 @@ public class Graph<T> {
 
     }
 
+    // todo remove?
     private void validateVertex(@Nonnull Vertex<T> vertex) {
         requireNonNull(vertex, "vertex");
         if (!vertices.contains(vertex)) {
-            throw new IllegalArgumentException("Vertex do not belong to the Graph");
+            throw new IllegalArgumentException("Vertex does not belong to the Graph");
         }
     }
 
@@ -201,4 +166,106 @@ public class Graph<T> {
                 .collect(Collectors.joining(" | ", "[", "]"));
     }
 
+//    public static <T> UndirectedUnweightedGraphBuilder<T> undirectedUnweightedGraphBuilder(Set<Vertex<T>> vertices){
+//
+//    }
+
+    public static <T> Builder<T> builder(@Nonnull Vertex<T> root) {
+        return new Builder<>(root);
+    }
+
+    public static class Builder<T> {
+
+//        private final boolean isWeighted;
+        private final Vertex<T> root;
+        private final Set<Vertex<T>> vertices;
+        private final Map<Vertex<T>, Set<Edge<T>>> edgesMap;
+
+        public Builder(@Nonnull Vertex<T> root) {
+            this.root = requireNonNull(root, "root");
+            this.vertices = new HashSet<>();
+            this.edgesMap = new HashMap<>();
+//            this.isWeighted = isWeighted;
+            vertices.add(root);
+        }
+
+        public Builder<T> addVertex(@Nonnull Vertex<T> vertex) {
+            vertices.add(requireNonNull(vertex, "vertex")); // todo check implementation aftrer swithivng to map
+            return this;
+        }
+
+        public Builder<T> addEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+            validateVertex(from);
+            validateVertex(to);
+            addEdgeInternal(from, to, weight);
+            return this;
+        }
+
+        public Builder<T> addUndirectedEdge(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+            validateVertex(from);
+            validateVertex(to);
+            if (from.compareTo(to) < 0) {
+                addEdgeInternal(from, to, weight);
+                addEdgeInternal(to, from, weight);
+            } else {
+                addEdgeInternal(to, from, weight);
+                addEdgeInternal(from, to, weight);
+            }
+            return this;
+        }
+
+        private Builder<T> addEdgeInternal(@Nonnull Vertex<T> from, @Nonnull Vertex<T> to, int weight) {
+
+            var newEdge = new Edge<>(to, weight);
+
+            edgesMap.compute(from, (key, value) -> {
+                if (value == null) {
+                    var newValue = new HashSet<Edge<T>>();
+                    newValue.add(newEdge);
+                    return newValue;
+                } else {
+                    value.add(newEdge);
+                    return value;
+                }
+            });
+            return this;
+        }
+
+        private void validateVertex(@Nonnull Vertex<T> vertex) {
+            requireNonNull(vertex, "vertex");
+            if (!vertices.contains(vertex)) {
+                throw new IllegalArgumentException("Vertex does not belong to the Graph");
+            }
+        }
+
+        public Graph<T> build() {
+            return new Graph<T>(
+                    this.root,
+                    this.vertices,
+                    this.edgesMap//,
+                    //isWeighted
+            );
+        }
+
+    }
+
+
+//    public static class UndirectedUnweightedGraphBuilder<T> extends Builder<T> {
+//
+//        public UndirectedUnweightedGraphBuilder(Vertex<T> vertex, boolean isWeighted) {
+//            super(vertex, isWeighted);
+//        }
+//
+//        public UndirectedUnweightedGraphBuilder<T> addVertex(@Nonnull Vertex<T> vertex) {
+//            super.addVertex(vertex);
+//            return this;
+//        }
+//
+//        public UndirectedUnweightedGraphBuilder<T> addEdge(@Nonnull Vertex<T> vertex) {
+//            graph.addVertex(vertex);
+//            return this;
+//        }
+//
+//
+//    }
 }

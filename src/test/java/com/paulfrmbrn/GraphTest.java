@@ -48,73 +48,75 @@ class GraphTest {
     private static final Graph<String> SIMPLE_UNDIRECTED_10_VERTICES_GRAPH;
     static {
 
-        // todo move to private static fabrics
-        THREE_VERTICES_GRAPH = new Graph<>(VERTEX_A);
-        THREE_VERTICES_GRAPH.addVertex(VERTEX_B);
-        THREE_VERTICES_GRAPH.addVertex(VERTEX_C);
-        THREE_VERTICES_GRAPH.addEdge(VERTEX_A, VERTEX_B, 5);
-        THREE_VERTICES_GRAPH.addEdge(VERTEX_B, VERTEX_A, 2);
-        THREE_VERTICES_GRAPH.addEdge(VERTEX_A, VERTEX_C, 1);
-        THREE_VERTICES_GRAPH.addEdge(VERTEX_C, VERTEX_B, 1);
+        THREE_VERTICES_GRAPH = Graph.builder(VERTEX_A)
+                .addVertex(VERTEX_B)
+                .addVertex(VERTEX_C)
+                .addEdge(VERTEX_A, VERTEX_B, 5)
+                .addEdge(VERTEX_B, VERTEX_A, 2)
+                .addEdge(VERTEX_A, VERTEX_C, 1)
+                .addEdge(VERTEX_C, VERTEX_B, 1)
+                .build();
 
-        FIVE_VERTICES_GRAPH = new Graph<>(VERTEX_E);
-        FIVE_VERTICES_GRAPH.addVertex(VERTEX_A);
-        FIVE_VERTICES_GRAPH.addVertex(VERTEX_B);
-        FIVE_VERTICES_GRAPH.addVertex(VERTEX_C);
-        FIVE_VERTICES_GRAPH.addVertex(VERTEX_D);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_A, VERTEX_C, 6);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_A, VERTEX_D, 6);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_B, VERTEX_A, 3);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_C, VERTEX_D, 2);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_D, VERTEX_B, 1);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_D, VERTEX_A, 6);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_D, VERTEX_C, 1);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_E, VERTEX_D, 2);
-        FIVE_VERTICES_GRAPH.addEdge(VERTEX_E, VERTEX_B, 4);
+        FIVE_VERTICES_GRAPH = Graph.builder(VERTEX_E)
+                .addVertex(VERTEX_A)
+                .addVertex(VERTEX_B)
+                .addVertex(VERTEX_C)
+                .addVertex(VERTEX_D)
+                .addEdge(VERTEX_A, VERTEX_C, 6)
+                .addEdge(VERTEX_A, VERTEX_D, 6)
+                .addEdge(VERTEX_B, VERTEX_A, 3)
+                .addEdge(VERTEX_C, VERTEX_D, 2)
+                .addEdge(VERTEX_D, VERTEX_B, 1)
+                .addEdge(VERTEX_D, VERTEX_A, 6)
+                .addEdge(VERTEX_D, VERTEX_C, 1)
+                .addEdge(VERTEX_E, VERTEX_D, 2)
+                .addEdge(VERTEX_E, VERTEX_B, 4)
+                .build();
 
-        UNREACHABLE_VERTEX_GRAPH = new Graph<>(VERTEX_A);
-        UNREACHABLE_VERTEX_GRAPH.addVertex(VERTEX_B);
-        UNREACHABLE_VERTEX_GRAPH.addVertex(VERTEX_C);
-        UNREACHABLE_VERTEX_GRAPH.addVertex(VERTEX_D);
-        UNREACHABLE_VERTEX_GRAPH.addEdge(VERTEX_A, VERTEX_B, 5);
-        UNREACHABLE_VERTEX_GRAPH.addEdge(VERTEX_A, VERTEX_C, 2);
-        UNREACHABLE_VERTEX_GRAPH.addEdge(VERTEX_B, VERTEX_A, 2);
-        UNREACHABLE_VERTEX_GRAPH.addEdge(VERTEX_C, VERTEX_A, 2);
-        UNREACHABLE_VERTEX_GRAPH.addEdge(VERTEX_D, VERTEX_B, 1);
-        UNREACHABLE_VERTEX_GRAPH.addEdge(VERTEX_D, VERTEX_C, 1);
+        UNREACHABLE_VERTEX_GRAPH = Graph.builder(VERTEX_A)
+                .addVertex(VERTEX_B)
+                .addVertex(VERTEX_C)
+                .addVertex(VERTEX_D)
+                .addEdge(VERTEX_A, VERTEX_B, 5)
+                .addEdge(VERTEX_A, VERTEX_C, 2)
+                .addEdge(VERTEX_B, VERTEX_A, 2)
+                .addEdge(VERTEX_C, VERTEX_A, 2)
+                .addEdge(VERTEX_D, VERTEX_B, 1)
+                .addEdge(VERTEX_D, VERTEX_C, 1)
+                .build();
 
-        DISCONNECTED_GRAPH = new Graph<>(VERTEX_A);
-        DISCONNECTED_GRAPH.addVertex(VERTEX_B);
+        DISCONNECTED_GRAPH = Graph.builder(VERTEX_A).addVertex(VERTEX_B).build();
 
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH = new Graph<>(VERTEX_A);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_B);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_C);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_D);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_D);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_E);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_F);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_G);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_H);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_I);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addVertex(VERTEX_J);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_A, VERTEX_B, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_A, VERTEX_D, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_A, VERTEX_E, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_B, VERTEX_C, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_C, VERTEX_D, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_C, VERTEX_H, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_D, VERTEX_F, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_D, VERTEX_I, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_E, VERTEX_F, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_E, VERTEX_G, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_I, VERTEX_J, 1);
-        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH.addUndirectedEdge(VERTEX_H, VERTEX_J, 1);
+        SIMPLE_UNDIRECTED_10_VERTICES_GRAPH = Graph.builder(VERTEX_A)
+                .addVertex(VERTEX_B)
+                .addVertex(VERTEX_C)
+                .addVertex(VERTEX_D)
+                .addVertex(VERTEX_D)
+                .addVertex(VERTEX_E)
+                .addVertex(VERTEX_F)
+                .addVertex(VERTEX_G)
+                .addVertex(VERTEX_H)
+                .addVertex(VERTEX_I)
+                .addVertex(VERTEX_J)
+                .addUndirectedEdge(VERTEX_A, VERTEX_B, 1)
+                .addUndirectedEdge(VERTEX_A, VERTEX_D, 1)
+                .addUndirectedEdge(VERTEX_A, VERTEX_E, 1)
+                .addUndirectedEdge(VERTEX_B, VERTEX_C, 1)
+                .addUndirectedEdge(VERTEX_C, VERTEX_D, 1)
+                .addUndirectedEdge(VERTEX_C, VERTEX_H, 1)
+                .addUndirectedEdge(VERTEX_D, VERTEX_F, 1)
+                .addUndirectedEdge(VERTEX_D, VERTEX_I, 1)
+                .addUndirectedEdge(VERTEX_E, VERTEX_F, 1)
+                .addUndirectedEdge(VERTEX_E, VERTEX_G, 1)
+                .addUndirectedEdge(VERTEX_I, VERTEX_J, 1)
+                .addUndirectedEdge(VERTEX_H, VERTEX_J, 1)
+                .build();
 
     }
 
     @Test
     public void shouldCreateNewGraphWithSingleVertexAndNoEdges() {
-        assertEquals("['A']", new Graph<>(VERTEX_A).toString());
+        assertEquals("['A']", Graph.builder(VERTEX_A).build().toString());
     }
 
     // todo adding another edge rewrite current
@@ -122,9 +124,9 @@ class GraphTest {
     @Test
     public void shouldCreateNewGraphWithMultipleVerticesAndNoEdges() {
         // when
-        var graph = new Graph<>(VERTEX_A);
-        graph.addVertex(VERTEX_B);
-        graph.addVertex(VERTEX_C);
+        var graph = Graph.builder(VERTEX_A)
+                .addVertex(VERTEX_B)
+                .addVertex(VERTEX_C).build();
         // then
         assertEquals("['A' | 'B' | 'C']", graph.toString());
     }
@@ -141,16 +143,12 @@ class GraphTest {
 
     @Test
     public void shouldFailOnAddingEdgeToVertexThatDoNotBelongToTheGraph() {
-        // given
-        var graph = new Graph<>(VERTEX_A);
-        graph.addVertex(VERTEX_B);
-        //then
-        assertThrows(IllegalArgumentException.class, () -> graph.addEdge(VERTEX_A, VERTEX_B, -1));
+        assertThrows(IllegalArgumentException.class, () -> Graph.builder(VERTEX_A).addVertex(VERTEX_B).addEdge(VERTEX_A, VERTEX_B, -1));
     }
 
     @Test
     public void shouldFailOnAddingEdgeWithNegativeValue() {
-        assertThrows(IllegalArgumentException.class, () -> new Graph<>(VERTEX_A).addEdge(VERTEX_A, VERTEX_B, -1));
+        assertThrows(IllegalArgumentException.class, () -> Graph.builder(VERTEX_A).addEdge(VERTEX_A, VERTEX_B, -1));
     }
 
     @Test
@@ -258,5 +256,6 @@ class GraphTest {
     public void shouldFailOnFindingPathInDisconnectedGraph() {
         assertThrows(IllegalStateException.class, () -> DISCONNECTED_GRAPH.findPath(VERTEX_A, VERTEX_B, (value) -> {}));
     }
-    
+
+
 }
